@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+    <title>Expense Tracker</title>
+    <style>
+        /* CSS Styles */
+        html, body {
+            height: 100%;
+            margin: 0; /* Remove default margin */
+        }
+
+        body {
+            background-image: url('https://images.pexels.com/photos/5466806/pexels-photo-5466806.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            overflow: hidden; /* Prevent scrollbars on smaller screens */
+        }
+
+        h1 {
+            color: #ffd900; /* Gold color */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            font-size: 3rem; /* Increased font size */
+            margin-bottom: 1rem; /* Space below the heading */
+        }
+
+        .container {
+            max-width: 500px; /* Limit width */
+            border-radius: 15px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+            margin: auto; /* Center container */
+            margin-top: 5rem; /* Add space at the top */
+            transition: transform 0.3s; /* Animation on hover */
+        }
+
+        .container:hover {
+            transform: scale(1.02); /* Scale up on hover */
+        }
+
+        .list-group-item {
+            transition: background-color 0.3s, transform 0.3s;
+            border-radius: 10px;
+            padding: 15px; /* Padding for better spacing */
+            margin-bottom: 10px; /* Space between items */
+        }
+
+        .list-group-item:hover {
+            background-color: #f9e5a1; /* Light gold */
+            transform: translateY(-2px); /* Slightly lift on hover */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
+        }
+
+        .alert {
+            margin-top: 20px;
+            border-radius: 10px;
+            font-size: 1.2rem; /* Increased font size */
+            padding: 10px;
+            transition: opacity 0.3s ease-in-out; /* Smooth fade in/out */
+        }
+
+        .alert.show {
+            opacity: 1; /* Fully visible */
+        }
+
+        .alert.hide {
+            opacity: 0; /* Hidden */
+        }
+
+        .btn-primary {
+            background-color: #FFD700; /* Gold color */
+            border-color: #FFD700;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; /* Add box-shadow transition */
+            font-size: 1.2rem; /* Increased button font size */
+        }
+
+        .btn-primary:hover {
+            background-color: #FFC107; /* Slightly darker gold */
+            transform: translateY(-2px); /* Lift on hover */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow effect on hover */
+        }
+
+        .btn-danger {
+            transition: background-color 0.3s, transform 0.3s; /* Transition effects */
+        }
+
+        .btn-danger:hover {
+            background-color: #dc3545;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow effect on hover */
+        }
+
+        .expense-list-header {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-top: 20px;
+            margin-bottom: 15px; /* Space below header */
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+            z-index: 1000; /* On top */
+            display: none; /* Hidden by default */
+            text-align: center; /* Center text */
+            transition: transform 0.3s ease; /* Smooth popup appearance */
+            opacity: 0; /* Start hidden */
+        }
+
+        .popup.show {
+            display: block; /* Show popup */
+            opacity: 1; /* Fully visible */
+            transform: translate(-50%, -50%) scale(1.05); /* Scale effect when shown */
+        }
+
+        .popup.hide {
+            opacity: 0; /* Fade out */
+            transform: translate(-50%, -50%) scale(0.95); /* Scale down when hidden */
+        }
+
+        .popup h2 {
+            font-size: 1.5rem; /* Increase size */
+            color: #333;
+            margin-bottom: 15px; /* Space below title */
+        }
+
+        .popup button {
+            margin-top: 10px;
+            padding: 8px 15px; /* Increased button padding */
+            font-size: 1rem; /* Button font size */
+            transition: background-color 0.3s, transform 0.3s; /* Button hover effects */
+        }
+
+        .popup button:hover {
+            background-color: #FFD700; /* Gold color on hover */
+            transform: translateY(-2px); /* Lift effect */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Expense Tracker</h1>
+        <form id="expense-form" class="mb-4">
+            <div class="mb-3">
+                <label for="title" class="form-label">Expense Title</label>
+                <input type="text" class="form-control" id="title" required>
+            </div>
+            <br>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" class="form-control" id="amount" required>
+            </div>
+            <br>
+            <div class="mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" required>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Add Expense</button>
+        </form>
+        <div id="expense-message" class="alert" style="display:none;"></div>
+        <h2 class="expense-list-header">Expense List</h2>
+        <div id="expense-list" class="list-group"></div>
+    </div>
+
+    <!-- Popup for messages -->
+    <div id="popup" class="popup">
+        <h2 id="popup-message"></h2>
+        <button class="btn btn-primary" onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        const expenseForm = document.getElementById('expense-form');
+        const expenseList = document.getElementById('expense-list');
+        const expenseMessage = document.getElementById('expense-message');
+        const popup = document.getElementById('popup');
+        const popupMessage = document.getElementById('popup-message');
+
+        expenseForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const amount = document.getElementById('amount').value;
+            const date = document.getElementById('date').value;
+
+            fetch('/api/expenses/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, amount, date }) // Include date in the request
+            })
+            .then(response => response.json())
+            .then(data => {
+                showPopup('Expense added successfully!');
+                fetchExpenses(); // Refresh the list
+                expenseForm.reset(); // Reset the form
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showPopup('Failed to add expense. Please try again.');
+            });
+        });
+
+        function fetchExpenses() {
+            fetch('/api/expenses/')
+                .then(response => response.json())
+                .then(data => {
+                    expenseList.innerHTML = '';
+                    data.forEach(expense => {
+                        const item = document.createElement('div');
+                        item.className = 'list-group-item d-flex justify-content-between align-items-center';
+                        item.innerHTML = `${expense.title} - $${expense.amount} on ${new Date(expense.date).toLocaleDateString()} 
+                            <button class="btn btn-danger btn-sm" onclick="deleteExpense(${expense.id})">Delete</button>`;
+                        expenseList.appendChild(item);
+                    });
+                });
+        }
+
+        function deleteExpense(id) {
+            if (confirm('Are you sure you want to delete this expense?')) {
+                fetch(`/api/expenses/${id}/`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            showPopup('Expense deleted successfully!');
+                            fetchExpenses(); // Refresh the list
+                        } else {
+                            alert('Failed to delete expense.');
+                        }
+                    });
+            }
+        }
+
+        function showPopup(message) {
+        popupMessage.innerText = message;
+        popup.classList.add('show'); // Show the popup
+        popup.style.display = 'block'; // Ensure it's visible
+        setTimeout(closePopup, 3000); // Auto-close after 3 seconds
+    }
+
+    function closePopup() {
+        popup.classList.remove('show'); // Hide the popup
+        setTimeout(() => {
+            popup.style.display = 'none'; // Completely hide it
+        }, 300); // Wait for the transition to finish
+    }
+
+        // Initial fetch
+        // devloped by onim
+        
+        fetchExpenses();
+    </script>
+</body>
+</html>
+
